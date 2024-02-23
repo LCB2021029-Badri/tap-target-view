@@ -1,62 +1,68 @@
 package com.example.tap_target_view
 
 
+import android.content.SharedPreferences
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.tap_target_view.databinding.ActivityMainBinding
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
+import com.getkeepsafe.taptargetview.TapTargetView
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding:ActivityMainBinding
+//    lateinit var sharedPref: SharedPreferences
+//    lateinit var prefEditor :  SharedPreferences.Editor
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val rickTarget = Rect(0, 0, binding.btnThird.width, binding.btnThird.height)
-        val rickDrawable = ContextCompat.getDrawable(this, R.drawable.ic_launcher_foreground) // Replace with your icon drawable
+//        sharedPref = getSharedPreferences("didShowPrompt", MODE_PRIVATE)
+//        prefEditor =sharedPref.edit()
 
+    showTargetSequence(
+        createTarget(findViewById(R.id.btn_first), "hello", "bla bla")!!,
+        createTarget(findViewById(R.id.btn_second), "hello", "bla bla")!!,
+        )
+    }
+
+    private fun createTarget(view:View, title:String, desc:String, id:Int=-1): TapTarget? =
+        TapTarget.forView(view,title,desc)
+            .tintTarget(false)
+            .id(id)
+
+    private fun showTargetSequence(
+        vararg tapTarget: TapTarget,
+        onFinish : () -> Unit = {},
+        onCancel : () -> Unit = {}
+    ){
         TapTargetSequence(this)
-            .targets(
-                TapTarget.forView(findViewById<View>(R.id.btn_first), "Gonna")
-                    .tintTarget(false)
-                ,
-                TapTarget.forView(findViewById<View>(R.id.btn_second), "You", "Up")
-                    .dimColor(R.color.c1)
-                    .outerCircleColor(R.color.c2)
-                    .targetCircleColor(R.color.c3)
-                    .textColor(R.color.c4),
-                TapTarget.forBounds(rickTarget, "Down", ":^)")
-                    .cancelable(false)
-                    .icon(rickDrawable)
-            )
-            .listener(object : TapTargetSequence.Listener {
-                // This listener will tell us when interesting(tm) events happen in regards
-                // to the sequence
+            .targets(tapTarget.toList()
+                ).listener(object :TapTargetSequence.Listener{
                 override fun onSequenceFinish() {
-                    // Yay
+                    Log.d("badri", "hello")
+                    onFinish()
                 }
 
-                override fun onSequenceStep(lastTarget: TapTarget, targetClicked: Boolean) {
-                    // Perform action for the current target
+                override fun onSequenceStep(lastTarget: TapTarget?, targetClicked: Boolean) {
+                    Log.d("badri", "hello")
                 }
 
-                override fun onSequenceCanceled(lastTarget: TapTarget) {
-                    // Boo
+                override fun onSequenceCanceled(lastTarget: TapTarget?) {
+                    Log.d("badri", "hello")
+                    onCancel()
                 }
+
             })
             .start()
-
-//        TapTargetSequence(this).target(
-//            TapTarget.forView(findViewById(R.id.btn_first),"hello")
-//        ).start()
-
-
     }
+
+
 }
