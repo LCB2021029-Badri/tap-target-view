@@ -27,42 +27,12 @@ class MainActivity : AppCompatActivity() {
 //        sharedPref = getSharedPreferences("didShowPrompt", MODE_PRIVATE)
 //        prefEditor =sharedPref.edit()
 
-    showTargetSequence(
+    showTargetSequence(this,
         createTarget(findViewById(R.id.btn_first), "hello", "bla bla")!!,
         createTarget(findViewById(R.id.btn_second), "hello", "bla bla")!!,
         )
     }
 
-    private fun createTarget(view:View, title:String, desc:String, id:Int=-1): TapTarget? =
-        TapTarget.forView(view,title,desc)
-            .tintTarget(false)
-            .id(id)
-
-    private fun showTargetSequence(
-        vararg tapTarget: TapTarget,
-        onFinish : () -> Unit = {},
-        onCancel : () -> Unit = {}
-    ){
-        TapTargetSequence(this)
-            .targets(tapTarget.toList()
-                ).listener(object :TapTargetSequence.Listener{
-                override fun onSequenceFinish() {
-                    Log.d("badri", "hello")
-                    onFinish()
-                }
-
-                override fun onSequenceStep(lastTarget: TapTarget?, targetClicked: Boolean) {
-                    Log.d("badri", "hello")
-                }
-
-                override fun onSequenceCanceled(lastTarget: TapTarget?) {
-                    Log.d("badri", "hello")
-                    onCancel()
-                }
-
-            })
-            .start()
-    }
 
 
 }
