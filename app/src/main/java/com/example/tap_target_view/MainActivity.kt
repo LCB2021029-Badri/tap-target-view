@@ -29,9 +29,6 @@ class MainActivity : AppCompatActivity() {
                     .tintTarget(false),
                 TapTarget.forView(findViewById<View>(R.id.btn_second), "You", "Up")
                     .tintTarget(false)
-//                TapTarget.forBounds(rickTarget, "Down", ":^)")
-//                    .cancelable(false)
-//                    .icon(rickDrawable)
             )
             .listener(object : TapTargetSequence.Listener {
                 override fun onSequenceFinish() {
