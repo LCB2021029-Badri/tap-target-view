@@ -1,6 +1,8 @@
 package com.example.tap_target_view
 
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
@@ -15,63 +17,29 @@ import com.getkeepsafe.taptargetview.TapTargetSequence
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding:ActivityMainBinding
+    private lateinit var sharedPref: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        val rickTarget = Rect(0, 0, binding.btnThird.width, binding.btnThird.height)
-//        val rickDrawable = ContextCompat.getDrawable(this, R.drawable.ic_launcher_foreground) // Replace with your icon drawable
-
-        TapTargetSequence(this)
-            .targets(
-                TapTarget.forView(findViewById<View>(R.id.btn_first), "Gonna")
-                    .tintTarget(false),
-                TapTarget.forView(findViewById<View>(R.id.btn_second), "You", "Up")
-                    .tintTarget(false)
+        // shared pref to show only the first time
+        sharedPref = getPreferences(Context.MODE_PRIVATE)
+        if (!sharedPref.getBoolean("didShowTargetSequence", false)) {
+            showTargetSequence(
+                this,
+                createTarget(binding.btnFirst, "asf", "afaf")!!,
+                createTarget(binding.btnSecond, "asf", "afaf")!!,
+                createTarget(binding.btnThird, "asf", "afaf")!!,
+                onFinish = {
+                    // Save in shared preferences that the target sequence has been shown
+                    sharedPref.edit().putBoolean("didShowTargetSequence", true).apply()
+                },
+                onCancel = {}
             )
-            .listener(object : TapTargetSequence.Listener {
-                override fun onSequenceFinish() {
-                    Log.d("qq", "finish")
-                }
-
-                override fun onSequenceStep(lastTarget: TapTarget, targetClicked: Boolean) {
-                    Log.d("qq", "seq step")
-                }
-
-                override fun onSequenceCanceled(lastTarget: TapTarget) {
-                    Log.d("qq", "seq cancelled")
-                    // Resume the sequence from the last target
-                    resumeSequenceFromLastTarget(lastTarget)
-                }
-            })
-            .start()
+        }
 
 
     }
 
-    private fun resumeSequenceFromLastTarget(lastTarget: TapTarget) {
-        // Create a new sequence starting from the last target
-        val newSequence = TapTargetSequence(this)
-            .targets(
-                TapTarget.forView(findViewById<View>(R.id.btn_second), "You", "Up")
-                    .tintTarget(false)
-            )
-            .listener(object : TapTargetSequence.Listener {
-                override fun onSequenceFinish() {
-                    Log.d("qq", "finish after resume")
-                }
-
-                override fun onSequenceStep(lastTarget: TapTarget, targetClicked: Boolean) {
-                    Log.d("qq", "seq step after resume")
-                }
-
-                override fun onSequenceCanceled(lastTarget: TapTarget) {
-                    Log.d("qq", "seq cancelled after resume")
-                }
-            })
-
-        // Start the new sequence
-        newSequence.start()
-    }
 }
