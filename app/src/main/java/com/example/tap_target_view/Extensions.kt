@@ -18,6 +18,7 @@ fun showTargetSequence(
     activity: Activity,
     vararg tapTarget: TapTarget,
     onFinish : () -> Unit = {},
+    onSeqStep : (TapTarget) -> Unit = {},
     onCancel : () -> Unit = {}
 ){
     TapTargetSequence(activity)
@@ -30,6 +31,7 @@ fun showTargetSequence(
 
             override fun onSequenceStep(lastTarget: TapTarget?, targetClicked: Boolean) {
                 Log.d("badri", "hello")
+                lastTarget?.let { onSeqStep(it) }
             }
 
             override fun onSequenceCanceled(lastTarget: TapTarget?) {

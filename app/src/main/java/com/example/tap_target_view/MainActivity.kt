@@ -66,23 +66,24 @@ class MainActivity : AppCompatActivity() {
         profileMenuItem: MenuItem?
     ) {
         val targetSequence = mutableListOf<TapTarget>(
-            createTarget(binding.btnFirst, "asf", "afaf")!!,
-            createTarget(binding.btnSecond, "asf", "afaf")!!,
-            createTarget(binding.btnThird, "asf", "afaf")!!,
+            createTarget(binding.btnFirst, "first", "description of the first button")!!,
+            createTarget(binding.btnSecond, "second", "description of the second button")!!,
+            createTarget(binding.btnThird, "third", "description of the third button")!!,
             createTarget(
                 binding.bottomNavigationView.findViewById(homeMenuItem!!.itemId),
-                "asf",
-                "afaf"
+                "nav 1",
+                "description of the forth button"
             )!!,
             createTarget(
                 binding.bottomNavigationView.findViewById(searchMenuItem!!.itemId),
-                "asf",
-                "afaf"
+                "nav 2",
+                "description of the fifth button",
+                1
             )!!,
             createTarget(
                 binding.bottomNavigationView.findViewById(profileMenuItem!!.itemId),
-                "asf",
-                "afaf"
+                "nav 3",
+                "description of the sixth button"
             )!!,
         )
 
@@ -91,10 +92,21 @@ class MainActivity : AppCompatActivity() {
             *targetSequence.toTypedArray(),  // Spread the list to varargs
             onFinish = {
                 // Save in shared preferences that the target sequence has been shown (use true)
-                sharedPref.edit().putBoolean("didShowTargetSequence", true).apply()
+                sharedPref.edit().putBoolean("didShowTargetSequence", false).apply()
+            },
+            onSeqStep = { tappedTarget ->
+                if (tappedTarget.id() == 1
+                ) {
+                    // Cancel the sequence when reaching the searchMenuItem
+                    onCancelSequence()
+                }
             },
             onCancel = {}
         )
+    }
+
+    private fun onCancelSequence(){
+        showToast("badri action")
     }
 
     private fun showToast(message: String) {
